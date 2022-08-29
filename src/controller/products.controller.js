@@ -18,9 +18,9 @@ const getProductId = async (req, res) => {
     //de la documentacion de sequelize el metodo "findOne" // busca en la tabla donde coincida
     const productById = await Product.findOne({
       where: {
-        id,
-        //id: id,
+        id, //id: id,
       },
+      attributes: ["name", "price", "description"], //"Proyecciones" los campos que quiero seleccionar en la consulta
     });
 
     // """""""middleware"""""""
@@ -39,7 +39,7 @@ const getProductId = async (req, res) => {
 
 const newProduct = async (req, res) => {
   //console.log(req.body);
-  const { name, price, description } = req.body; //obtener datos del json
+  const { name, price, description, categoryId } = req.body; //obtener datos del json
 
   try {
     const createProduct = await Product.create({
@@ -47,6 +47,7 @@ const newProduct = async (req, res) => {
       name,
       price,
       description,
+      categoryId,
       /*
       Forma NO RESUMIDA::
       name: name,
@@ -64,20 +65,14 @@ const newProduct = async (req, res) => {
 };
 
 const updateProduct = async (req, res) => {
-  const id = req.params.id; //encuentro el user por id
-  const { name, price, description } = req.body; //obtengo sus datos y sus posibles modificaciones
   try {
-    // await Product.findOne({
-    //   where: {
-    //     id
-    //   }
-    // })
+    const id = req.params.id; //encuentro el user por id
     //metodo de squelize para modificar una tabla
-    const getProduct = await Product.findByPk(id);
-    getProduct.name = name;
-    getProduct.price = price;
-    getProduct.description = description;
-
+    const getProduct = await Product.findOne({
+      where: { id },
+    });
+    //Tomando todo lo del body y seteandolo con metodo de sequelize
+    getProduct.set(req.body)//Toda la data que llegue ne l body si coincide con las tuplas lo setea
     //Una vez actualizado hay que guardalo con el metodo .save( ) de sequelize
     await getProduct.save();
     res.status(200).send(getProduct);
@@ -98,7 +93,7 @@ const deleteProduct = async (req, res) => {
         id,
       },
     }); //Metodo para buscar y eliminar
-    res.status(200).send("removed product " + id);
+    res.status(204).send("removed product " + id);
   } catch (e) {
     return res.status(500).json({
       message: e.message,
