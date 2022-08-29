@@ -2,8 +2,6 @@
 import { DataTypes } from "sequelize";
 //requiero una instancia del objeto sequelize que tiene la conexion a la DB
 import { sequelize } from "../database/database.js";
-//importo el modelo que va a estar realcionado
-import { Category } from "./Category.js";
 
 //documentacion https://sequelize.org/docs/v6/core-concepts/model-basics/
 
@@ -28,19 +26,4 @@ export const Product = sequelize.define("products", {
   description: {
     type: DataTypes.STRING,
   },
-});
-
-//Generar Relaciones(hasMany nos dice que tiene realcion con otro objeto del Modelo(muchos productos pertenecen a categoria))
-Product.hasMany(Category, {
-  //Objeto que crea y especifica como se crearan las relaciones
-  foreignKey: "productId",
-  //Opciones, donde se va a enlazar el fonreignKey en este esquema(Product)
-  sourceKey: "id",
-});
-
-//La categoria tambien pertenece(esta asociada/ tiene una relacion) a:
-Category.belongsTo(Product, {
-  foreignKey: "productId",
-  //Opciones, donde se va a enlazar el fonreignKey en este esquema(Product)
-  targetId: "id", //tabla que se enlaza con la tabla PADRE
 });
