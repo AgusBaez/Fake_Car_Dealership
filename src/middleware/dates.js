@@ -13,12 +13,15 @@
 //LIBRERIA: MOMENT.js - para el menejo del tiempo
 
 export function dateToDay(req, res, next) {
-  let date = new Date();
-
-  return (
-    console.log(
-      `new Request - ${req.method} - On ${date.toLocaleDateString()}`
-    ),
-    next()
-  );
+  try {
+    let date = new Date();
+    return (
+      console.log(
+        `new Request - ${req.method} - On ${date.toLocaleDateString()}`
+      ),
+      next()
+    );
+  } catch (error) {
+    return res.status(400).send({ mesage: error.mesage });
+  }
 }
