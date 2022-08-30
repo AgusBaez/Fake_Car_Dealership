@@ -2,14 +2,15 @@
 import { Product } from "../model/Product.js";
 
 const getProducts = async (_req, res) => {
-  try {
-    const allProducts = await Product.findAll(); //RECORRE LAS FILAS DE LA TABLA Y CREA UN ARREGLO
-    res.status(200).send(allProducts);
-  } catch (e) {
-    return res.status(500).json({
-      message: e.message,
+  await Product.findAll() //RECORRE LAS TUPLAS DE LA TABLA Y CREA UN ARREGLO
+    .then((findAll) => {
+      res.status(200).send(findAll);
+    })
+    .catch((error) => {
+      return res.status(500).json({
+        message: error.message,
+      });
     });
-  }
 };
 
 const getProductId = async (req, res) => {
@@ -38,10 +39,8 @@ const getProductId = async (req, res) => {
 };
 
 const newProduct = async (req, res) => {
-  //console.log(req.body);
-  const { name, price, description, categoryId } = req.body; //obtener datos del json
-
   try {
+    const { name, price, description, categoryId } = req.body; //obtener datos del json
     const createProduct = await Product.create({
       //nuevo prototipo de objeto Producto // representa de la tabla sus filas en la DB
       name,
@@ -56,9 +55,9 @@ const newProduct = async (req, res) => {
       */
     });
     //console.log("creating products...");
-    res.status(200).send(createProduct);
+    res.status(201).send(createProduct);
   } catch (e) {
-    return res.status(500).json({
+    return res.status(400).json({
       message: e.message,
     });
   }
@@ -72,10 +71,10 @@ const updateProduct = async (req, res) => {
       where: { id },
     });
     //Tomando todo lo del body y seteandolo con metodo de sequelize
-    getProduct.set(req.body)//Toda la data que llegue ne l body si coincide con las tuplas lo setea
+    getProduct.set(req.body); //Toda la data que llegue ne l body si coincide con las tuplas lo setea
     //Una vez actualizado hay que guardalo con el metodo .save( ) de sequelize
     await getProduct.save();
-    res.status(200).send(getProduct);
+    res.status(201).send(getProduct);
   } catch (e) {
     return res.status(500).json({
       message: e.message,
@@ -85,7 +84,7 @@ const updateProduct = async (req, res) => {
 
 const deleteProduct = async (req, res) => {
   const id = req.params.id;
-  //const {id} = req.param;
+  //const {id} = req.param; //2° manera de obtener el parametro
   try {
     await Product.destroy({
       //obtiene como parametro un objeto para darle la opcion where
