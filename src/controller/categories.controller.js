@@ -18,7 +18,6 @@ const getCategories = async (req, res) => {
 const addCategory = async (req, res) => {
   try {
     const { name, stock, description } = req.body;
-
     const newCategory = await Category.create({
       name,
       stock,

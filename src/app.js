@@ -8,7 +8,8 @@ import categoriesRouter from "./routes/categories.routes.js";
 const app = express();
 
 //middlewares
-app.use(express.json()); //middleware de express: el servidor interpreta todo tipo de dato JSON para guardarlo: estos json viene en req.body
+app.use(express.json()); //middleware de express.json(): el servidor interpreta todo tipo de dato JSON para guardarlo: estos json viene en los endpoints req
+
 
 //router
 app.use(productsRouter, categoriesRouter);
