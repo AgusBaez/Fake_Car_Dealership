@@ -12,7 +12,7 @@
 
 //LIBRERIA: MOMENT.js - para el menejo del tiempo
 
-export function dateToDay(req, res, next) {
+function dateToDay(req, res, next) {
   try {
     let date = new Date();
     return (
@@ -25,3 +25,5 @@ export function dateToDay(req, res, next) {
     return res.status(400).send({ mesage: error.mesage });
   }
 }
+
+module.exports = dateToDay;
