@@ -1,5 +1,5 @@
 //traigo el modelo para generar consultas
-import { Product } from "../model/Product.js";
+const { Product } = require("../model/Product.js");
 
 const getProducts = async (_req, res) => {
   await Product.findAll() //RECORRE LAS TUPLAS DE LA TABLA Y CREA UN ARREGLO
@@ -108,4 +108,4 @@ const productsController = {
   deleteProduct,
 };
 
-export default productsController;
+module.exports = productsController;

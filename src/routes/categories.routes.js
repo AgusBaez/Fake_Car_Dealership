@@ -1,7 +1,6 @@
-import Router from "express";
+const Router = require("express");
 //requiero importar el controlador de usuarios
-import categoriesController from "../controller/categories.controller.js";
-
+const categoriesController = require("../controller/categories.controller.js");
 const router = Router();
 
 router.get("/category", categoriesController.getCategories);
@@ -13,4 +12,4 @@ router.delete("/category/:id", categoriesController.deleteCategory);
 //De la categoria por id traeme los productos relacionados
 router.get("/category/:id/products", categoriesController.getCategoryProducts);
 
-export default router;
+module.export = router;

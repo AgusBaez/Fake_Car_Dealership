@@ -1,5 +1,5 @@
-import { Category } from "../model/Category.js";
-import { Product } from "../model/Product.js";
+const { Category } = require("../model/Category.js");
+const { Product } = require("../model/Product.js");
 
 const getCategories = async (req, res) => {
   try {
@@ -123,4 +123,4 @@ const productsController = {
   getCategoryProducts,
 };
 
-export default productsController;
+module.exports = productsController;
