@@ -1,7 +1,7 @@
 //Levanta la App
-import app from "./app.js";
+const app = require("./app.js");
 //Llamo a la instacia de BDD
-import { sequelize } from "./database/database.js";
+const sequelize = require("./database/database.js");
 
 //Funcion para probar la conexion a la Base de Datos
 async function main() {
