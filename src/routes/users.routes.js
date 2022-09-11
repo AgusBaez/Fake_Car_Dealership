@@ -11,5 +11,4 @@ router.post("/users", usersController.addUser);
 //Se generea un error si no encuentra rutas
 router.use(errorHanddler.notFound);
 
-
 module.exports = router;

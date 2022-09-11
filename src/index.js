@@ -11,7 +11,7 @@ async function main() {
 
     const port = 8080;
     app.listen(port);
-    console.log(`Server is listening on port: ${port}`);
+    console.log(`Server is listening on port: http://localhost:${port}`);
   } catch (err) {
     console.error("Unable to connect to the database:", err);
   }
