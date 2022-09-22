@@ -1,11 +1,16 @@
 const db = require("../models/index");
-const { User } = db;
+const { users, cars } = db;
 const helper = require("../helper/checkUser");
 
 const getUsers = async (_req, res, next) => {
-  await User.findAll() //RECORRE LAS TUPLAS DE LA TABLA Y CREA UN ARREGLO
+  await users
+    .findAll({ include: cars }) //RECORRE LAS TUPLAS DE LA TABLA Y CREA UN ARREGLO
     .then((findAll) => {
-      res.status(200).send(findAll);
+      if (findAll.length === 0) {
+        res.status(400).send("Not Found any User");
+      } else {
+        res.status(201).send(findAll);
+      }
     })
     .catch((error) => next(error));
 };
@@ -13,7 +18,8 @@ const getUsers = async (_req, res, next) => {
 const getUsersById = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const userFind = await User.findOne({
+    const userFind = await users.findOne({
+      include: cars,
       where: {
         id,
       },
@@ -30,19 +36,15 @@ const getUsersById = async (req, res, next) => {
 
 const addUser = async (req, res, next) => {
   try {
-    const { firstName, lastName, email } = req.body;
+    const incomingBody = req.body;
     //helper checkMail
     if (!helper.userMailValidator(req.body.email)) {
       const error = new Error(" CONFLICT MAIL (409)");
       error.status = 409;
-      next(error);
+      return next(error);
     }
 
-    const newUser = await User.create({
-      firstName,
-      lastName,
-      email,
-    });
+    const newUser = await users.create(incomingBody);
     res.status(201).send(newUser);
   } catch (error) {
     return next(error);
@@ -57,10 +59,10 @@ const updateUser = async (req, res, next) => {
     if (!helper.userMailValidator(req.body.email)) {
       const error = new Error(" CONFLICT MAIL (409)");
       error.status = 409;
-      next(error);
+      return next(error);
     }
-    
-    await User.update(incomingBody, {
+
+    await users.update(incomingBody, {
       where: { id },
     });
     res.status(201).send(`Updated User ID: ${id}`);
@@ -73,7 +75,7 @@ const deleteUser = async (req, res, next) => {
   try {
     const id = req.params.id;
 
-    await User.destroy({
+    await users.destroy({
       where: { id },
     });
     res.status(202).send(`Deleted User ID: ${id}`);
