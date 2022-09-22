@@ -1,4 +1,4 @@
-// sequelize // instancia de la biblioteca Sequelize
+// sequelize // instancia de la biblioteca Sequelize // Otra forma de hacerlo ::
 const Sequelize = require("sequelize");
 require("dotenv").config();
 // Conexion y exportacion de la DB // Option 3: Passing parameters separately (other dialects)
@@ -14,4 +14,4 @@ const sequelize = new Sequelize(
   }
 );
 
-module.exports = sequelize
+module.exports = sequelize;
