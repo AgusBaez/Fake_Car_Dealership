@@ -12,6 +12,5 @@ router.get("/users/:id", usersController.getUsersById);
 router.put("/users/:id", usersController.updateUser);
 router.delete("/users/:id", usersController.deleteUser);
 //Se generea un error si no encuentra rutas
-router.use(errorHanddler.notFound);
 
 module.exports = router;
