@@ -1,12 +1,13 @@
-// //requiero la funcionalidades de router
-// const Router = require("express");
-// const router = Router();
+//requiero la funcionalidades de router
+const Router = require("express");
+const router = Router();
+//controller
+const sesionController = require("../controller/sesion.controller.js");
+//middleware
+const errorHanddler = require("../middleware/errorHandler");
 
-// //middleware
-// const errorHanddler = require("../middleware/errorHandler");
+//registro de usuarios
+router.post("/login", sesionController.login);
+router.post("/register", sesionController.register);
 
-
-// //Se generea un error si no encuentra rutas
-// router.use(errorHanddler.notFound);
-
-// module.exports = router;
+module.exports = router;
