@@ -18,13 +18,23 @@ const register = async (req, res, next) => {
       return next(error);
     }
 
-    const newUser = await users.create({
-      firstName,
-      lastName,
-      email,
-      password: bcrypt.hashSync(password, 10),
-    });
-    res.status(201).send(newUser);
+    await users
+      .create({
+        firstName,
+        lastName,
+        email,
+        password: bcrypt.hashSync(password, 10),
+        admin
+      })
+      .then((newUser) => {
+        if (newUser.length === 0) {
+          res.status(400).send({ ok: false, message: "Invalid data" });
+        } else {
+          res.status(201).send({ ok: true, message: "Register New User" });
+        }
+      })
+      .catch((error) => next(error));
+    //res.status(201).send({ok: true});
   } catch (error) {
     return next(error);
   }
@@ -33,33 +43,44 @@ const register = async (req, res, next) => {
 const login = async (req, res, next) => {
   try {
     const bodyData = req.body;
-    //helper checkMail
+    //helper checkMail & check password
     if (
       typeof bodyData.password != typeof "string" ||
-      !helper.userMailValidator(req.body.email)
+      !helper.userMailValidator(bodyData.email)
     ) {
-      const error = new Error(" CONFLICT(409)");
+      const error = new Error("CONFLICT(409)");
       error.status = 409;
       return next(error);
     }
 
     //buscame el usuario en la DB
     const loginUser = await users.findOne({ where: { email: bodyData.email } });
-    //Caso que la constraseña no sea igual
-    if (!bcrypt.compareSync(bodyData.password, loginUser.password)) {
-      const error = new Error(" Unautorized (401)");
-      error.status = 401;
+    //En el caso que se encuentre el usuario:
+    if (loginUser != null) {
+      //Caso que la constraseña no sea igual
+      if (
+        typeof bodyData.password != typeof "string" ||
+        loginUser.password === null ||
+        !bcrypt.compareSync(bodyData.password, loginUser.password)
+      ) {
+        const error = new Error("(400)");
+        error.status = 401;
+        return next(error);
+      }
+      //jwt.sign(payload, secretOrPrivateKey, [options, callback]) //https://www.npmjs.com/package/jsonwebtoken#jwtsignpayload-secretorprivatekey-options-callback
+      let token = jwt.sign(
+        {
+          user: loginUser,
+        },
+        process.env.SEED_AUTHENTICATION,
+        { expiresIn: process.env.TOKEN_EXP }
+      );
+      res.status(201).json({ ok: true, user: loginUser, token: token }); //Datos codificados no se cargan en el payload del token
+    } else {
+      const error = new Error("CONFLICT(409)");
+      error.status = 409;
       return next(error);
     }
-    //jwt.sign(payload, secretOrPrivateKey, [options, callback]) //https://www.npmjs.com/package/jsonwebtoken#jwtsignpayload-secretorprivatekey-options-callback
-    let token = jwt.sign(
-      {
-        usuario: loginUser,
-      },
-      process.env.KEY_JWT,
-      { expiresIn: process.env.TOKEN_EXP }
-    );
-    res.status(201).json({ ok: true, usuario: loginUser, token: token });
   } catch (error) {
     return next(error);
   }

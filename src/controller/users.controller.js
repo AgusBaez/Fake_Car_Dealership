@@ -1,6 +1,7 @@
 const db = require("../models/index");
 const { users, cars } = db;
 const helper = require("../helper/checkUser");
+const bcrypt = require("bcrypt");
 
 const getUsers = async (_req, res, next) => {
   await users
@@ -15,7 +16,7 @@ const getUsers = async (_req, res, next) => {
     .catch((error) => next(error));
 };
 
-const getUsersById = async (req, res, next) => {
+const getUserById = async (req, res, next) => {
   try {
     const id = req.params.id;
     const userFind = await users.findOne({
@@ -36,16 +37,32 @@ const getUsersById = async (req, res, next) => {
 
 const addUser = async (req, res, next) => {
   try {
-    const incomingBody = req.body;
+    const { firstName, lastName, email, password, admin } = req.body;
     //helper checkMail
-    if (!helper.userMailValidator(req.body.email)) {
+    if (
+      typeof req.body.password != typeof "string" ||
+      !helper.userMailValidator(req.body.email)
+    ) {
       const error = new Error(" CONFLICT MAIL (409)");
       error.status = 409;
       return next(error);
     }
 
-    const newUser = await users.create(incomingBody);
-    res.status(201).send(newUser);
+    await users
+      .create({
+        firstName,
+        lastName,
+        email,
+        password: bcrypt.hashSync(password, 10),
+        admin,
+      })
+      .then((newUser) => {
+        if (newUser.length === 0) {
+          res.status(400).send({ ok: false, message: "Invalid data" });
+        } else {
+          res.status(201).send({ ok: true, message: "Register New User" });
+        }
+      });
   } catch (error) {
     return next(error);
   }
@@ -54,18 +71,85 @@ const addUser = async (req, res, next) => {
 const updateUser = async (req, res, next) => {
   try {
     const id = req.params.id;
-    const incomingBody = req.body;
+    const { firstName, lastName, email, password, admin } = req.body;
 
-    if (!helper.userMailValidator(req.body.email)) {
+    if (typeof req.body.password != typeof "string") {
       const error = new Error(" CONFLICT MAIL (409)");
       error.status = 409;
       return next(error);
     }
 
-    await users.update(incomingBody, {
-      where: { id },
-    });
-    res.status(201).send(`Updated User ID: ${id}`);
+    if (req.body.email) {
+      if (!req.body.email || !helper.userMailValidator(req.body.email)) {
+        const error = new Error(" CONFLICT MAIL (409)");
+        error.status = 409;
+        return next(error);
+      }
+    }
+
+    await users.update(
+      {
+        firstName,
+        lastName,
+        email,
+        password: bcrypt.hashSync(password, 10),
+        admin,
+      },
+      {
+        //> ENCRYPTAR CONTRASEÑAA
+        where: { id },
+      }
+    );
+    res.status(201).send({ ok: true, message: "Update User" });
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const editUserLogged = async (req, res, next) => {
+  try {
+    let id = req.user.id;
+    const { firstName, lastName, email, password, admin } = req.body;
+
+    if (req.body.password) {
+      if (typeof req.body.password != typeof "string") {
+        const error = new Error(" CONFLICT MAIL (409)");
+        error.status = 409;
+        return next(error);
+      }
+    }
+
+    if (req.body.email) {
+      if (!req.body.email || !helper.userMailValidator(req.body.email)) {
+        const error = new Error(" CONFLICT MAIL (409)");
+        error.status = 409;
+        return next(error);
+      } else if (req.body.password) {
+        await users.update(
+          {
+            password: bcrypt.hashSync(password, 10),
+          },
+          {
+            //> ENCRYPTAR CONTRASEÑAA
+            where: { id },
+          }
+        );
+      }
+    }
+
+    await users.update(
+      {
+        firstName,
+        lastName,
+        email,
+        admin,
+      },
+      {
+        //> ENCRYPTAR CONTRASEÑAA
+        where: { id },
+      }
+    );
+    res.status(201).send({ ok: true, message: "Update User" });
   } catch (error) {
     return next(error);
   }
@@ -78,7 +162,7 @@ const deleteUser = async (req, res, next) => {
     await users.destroy({
       where: { id },
     });
-    res.status(202).send(`Deleted User ID: ${id}`);
+    res.status(202).send({ ok: true, message: "Deleted User" });
   } catch (error) {
     return next(error);
   }
@@ -86,9 +170,10 @@ const deleteUser = async (req, res, next) => {
 
 const usersController = {
   getUsers,
-  getUsersById,
+  getUserById,
   addUser,
   updateUser,
+  editUserLogged,
   deleteUser,
 };
 
