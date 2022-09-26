@@ -75,12 +75,26 @@ const deleteCar = async (req, res, next) => {
   }
 };
 
+const editCarLogged = async (req, res, next) => {
+  try {
+    let id = req.user.id; //Lo saco del token
+    const { brand, speed, user_id } = req.body;
+
+    await cars.update({ brand, speed, user_id }, { where: { id } });
+
+    res.status(201).send({ ok: true, message: "Update Car" });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 const carsController = {
   getCars,
   getCarsById,
   addCar,
   updateCar,
   deleteCar,
+  editCarLogged,
 };
 
 module.exports = carsController;

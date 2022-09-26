@@ -3,14 +3,15 @@ const router = Router();
 
 const carsController = require("../controller/cars.controller.js");
 //middleware
-const { checkAdmin } = require("../middleware/authJWT");
+const { checkAdmin, checkLoggedUser } = require("../middleware/authJWT");
 //helper
 const { checkLoggedIn } = require("../helper/checkUser");
 
 router.get("/cars", checkLoggedIn, carsController.getCars);
 router.post("/cars", checkAdmin, carsController.addCar);
-//Comprar
-//Vender
+//Comprar //Vender //Editar Auto
+router.put("/cars/edit", checkLoggedUser, carsController.editCarLogged);
+
 router.get("/cars/:id", checkLoggedIn, carsController.getCarsById);
 router.put("/cars/:id", checkAdmin, carsController.updateCar);
 router.delete("/cars/:id", checkAdmin, carsController.deleteCar);
