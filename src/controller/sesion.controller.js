@@ -10,7 +10,7 @@ require("dotenv").config();
 
 const register = async (req, res, next) => {
   try {
-    const { firstName, lastName, email, password } = req.body;
+    const { firstName, lastName, email, password, admin } = req.body;
     //helper checkMail
     if (!helper.userMailValidator(req.body.email)) {
       const error = new Error(" CONFLICT MAIL (409)");
@@ -63,8 +63,8 @@ const login = async (req, res, next) => {
         loginUser.password === null ||
         !bcrypt.compareSync(bodyData.password, loginUser.password)
       ) {
-        const error = new Error("(400)");
-        error.status = 401;
+        const error = new Error("FAIL LOGIN(400)");
+        error.status = 400;
         return next(error);
       }
       //jwt.sign(payload, secretOrPrivateKey, [options, callback]) //https://www.npmjs.com/package/jsonwebtoken#jwtsignpayload-secretorprivatekey-options-callback
