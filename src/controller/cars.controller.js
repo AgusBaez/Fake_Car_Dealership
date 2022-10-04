@@ -14,6 +14,19 @@ const getCars = async (_req, res, next) => {
     .catch((error) => next(error));
 };
 
+const getBrand = async (_req, res, next) => {
+  await cars
+    .findAll({ include: cars.brand }) //RECORRE LAS TUPLAS DE LA TABLA Y CREA UN ARREGLO
+    .then((findAll) => {
+      if (findAll.length === 0) {
+        res.status(400).send("Not brand car found");
+      } else {
+        res.status(201).send(findAll);
+      }
+    })
+    .catch((error) => next(error));
+};
+
 const getCarsById = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -35,12 +48,13 @@ const getCarsById = async (req, res, next) => {
 
 const addCar = async (req, res, next) => {
   try {
-    const { brand, speed, user_id } = req.body;
+    const { brand, speed, user_id, plate } = req.body;
 
     const newCar = await cars.create({
       brand,
       speed,
       user_id,
+      plate,
     });
     res.status(201).send(newCar);
   } catch (error) {
@@ -79,8 +93,8 @@ const editCarLogged = async (req, res, next) => {
   try {
     let id = req.user.id; //Lo saco del token
     const { brand, speed, user_id } = req.body;
-
-    await cars.update({ brand, speed, user_id }, { where: { id } });
+    console.log({ user_id: id });
+    await cars.update({ brand, speed, user_id }, { where: { user_id: id } });
 
     res.status(201).send({ ok: true, message: "Update Car" });
   } catch (error) {
@@ -90,6 +104,7 @@ const editCarLogged = async (req, res, next) => {
 
 const carsController = {
   getCars,
+  getBrand,
   getCarsById,
   addCar,
   updateCar,

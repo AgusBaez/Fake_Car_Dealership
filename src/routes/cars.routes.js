@@ -9,6 +9,7 @@ const { checkLoggedIn } = require("../helper/checkUser");
 
 router.get("/cars", checkLoggedIn, carsController.getCars);
 router.post("/cars", checkAdmin, carsController.addCar);
+router.get("/cars/brand", carsController.getBrand);
 //Comprar //Vender //Editar Auto
 router.put("/cars/edit", checkLoggedUser, carsController.editCarLogged);
 
