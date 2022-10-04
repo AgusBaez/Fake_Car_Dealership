@@ -10,7 +10,7 @@ const getUsers = async (_req, res, next) => {
       if (findAll.length === 0) {
         res.status(400).send("Not Found any User");
       } else {
-        res.status(201).send(findAll);
+        res.status(200).send(findAll);
       }
     })
     .catch((error) => next(error));
