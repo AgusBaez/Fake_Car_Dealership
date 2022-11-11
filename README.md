@@ -1,4 +1,4 @@
-# Fake Store Sequelize - API REST(using PostgreSQL)
+# Fake Car Dealership Store - API REST(using PostgreSQL)
 
 **_This project is to learn basic concepts about creating APIs with ORM Sequelize, connecting to PostgreSQL to execute queries (creating, reading, updating, deleting and getting data from the database), using an MVC architecture. The Fake_Store database has product tables that have relationships to the category table_**
 
