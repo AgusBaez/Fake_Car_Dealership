@@ -8,4 +8,11 @@ module.exports = {
     host: process.env.HOST,
     dialect: "postgres",
   },
+  test: {
+    username: "postgres",
+    password: "java",
+    database: "fake_store_test",
+    host: 'localhost',
+    dialect: "postgres",
+  },
 };
