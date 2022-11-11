@@ -8,7 +8,7 @@ const getUsers = async (_req, res, next) => {
     .findAll({ include: cars }) //RECORRE LAS TUPLAS DE LA TABLA Y CREA UN ARREGLO
     .then((findAll) => {
       if (findAll.length === 0) {
-        res.status(400).send("Not Found any User");
+        res.status(200).send("Not Found any User");
       } else {
         res.status(200).send(findAll);
       }

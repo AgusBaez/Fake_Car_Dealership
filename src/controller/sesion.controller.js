@@ -65,7 +65,7 @@ const login = async (req, res, next) => {
       ) {
         const error = new Error("FAIL LOGIN(400)");
         error.status = 400;
-        return next(error);
+        return next(error); 
       }
       //jwt.sign(payload, secretOrPrivateKey, [options, callback]) //https://www.npmjs.com/package/jsonwebtoken#jwtsignpayload-secretorprivatekey-options-callback
       let token = jwt.sign(

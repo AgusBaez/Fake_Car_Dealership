@@ -10,8 +10,9 @@ async function main() {
     await sequelize.sync({ force: false }); //Metodo para la syncronizacion con la Base de Datos y la creacion de tablas si no existe // La opcion de force
 
     const port = 8080;
-    app.listen(port);
+    const server = app.listen(port);
     console.log(`Server is listening on port: http://localhost:${port}`);
+    module.exports = server;
   } catch (err) {
     console.error("Unable to connect to the database:", err);
   }

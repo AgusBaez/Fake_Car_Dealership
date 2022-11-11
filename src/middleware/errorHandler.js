@@ -23,7 +23,7 @@ const errorParser = (error, req, res, next) => {
       menssage: "CONFLICT ERR 409",
     });
   } else if (error.status === 401) {
-    res.status(409).send({
+    res.status(401).send({
       ok: false,
       menssage: "- Unauthorized (401) - ",
     });
